@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { FaTrash } from 'react-icons/fa';
 import './App.css';
 
 type Task = {
@@ -45,6 +46,18 @@ function App() {
     setEditTitle('');
   };
 
+  const addNewTask = () => {
+    const newId = Math.max(0, ...tasks.map(t => t.id)) + 1;
+    const newTask: Task = { id: newId, title: 'New Subgoal', status: 'todo' };
+    setTasks(prev => [...prev, newTask]);
+    setEditingTaskId(newId);  // Focus on new input
+    setEditTitle('New Subgoal');
+  };
+
+  const deleteTask = (id: number) => {
+    setTasks(prev => prev.filter(task => task.id !== id));
+  };
+
   const progressPercent = Math.round(
     (tasks.filter(task => task.status === 'done').length / tasks.length) * 100
   );
@@ -52,6 +65,8 @@ function App() {
   return (
     <div className="App">
       <h2 className="header">Task: Deploy application in dev</h2>
+
+      <button onClick={addNewTask} className="add-btn">+ Add Subgoal</button>
 
       <div className="task-flow">
         {tasks.map(task => (
@@ -90,6 +105,9 @@ function App() {
               <option value="doing">Doing</option>
               <option value="done">Done</option>
             </select>
+            <button className="delete-btn" onClick={() => deleteTask(task.id)}>
+            <>{FaTrash({})}</>
+            </button>
           </div>
         ))}
       </div>

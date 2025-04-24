@@ -68,6 +68,36 @@
   margin-bottom: 5px;
 }
 
+.add-btn {
+  margin-bottom: 20px;
+  padding: 8px 12px;
+  font-size: 16px;
+  border-radius: 8px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.task-box-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  color: #888;
+  transition: color 0.2s ease;
+}
+
+.delete-btn:hover {
+  color: #e74c3c;
+}
+
 .dot.red { background-color: #f66; }
 .dot.yellow { background-color: #ffd966; }
 .dot.green { background-color: #90ee90; }
