@@ -28,7 +28,7 @@
 }
 
 .red { background-color: #f66; }
-.yellow { background-color: #ffd966; color: white; }
+.yellow { background-color: #ffd966; color: black; }
 .green { background-color: #90ee90; color: black; }
 
 .progress-bar-container {
