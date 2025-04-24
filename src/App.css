@@ -59,6 +59,15 @@
   margin-right: 6px;
 }
 
+.task-box input {
+  width: 90%;
+  padding: 6px;
+  font-size: 1em;
+  border: none;
+  border-radius: 5px;
+  margin-bottom: 5px;
+}
+
 .dot.red { background-color: #f66; }
 .dot.yellow { background-color: #ffd966; }
 .dot.green { background-color: #90ee90; }

@@ -15,6 +15,9 @@ function App() {
     { id: 4, title: 'Subgoal Label', status: 'done' },
   ]);
 
+  const [editingTaskId, setEditingTaskId] = useState<number | null>(null);
+  const [editTitle, setEditTitle] = useState('');
+
   const getColor = (status: string) => {
     switch (status) {
       case 'todo': return 'red';
@@ -32,6 +35,16 @@ function App() {
     );
   };
 
+  const handleTitleChange = (id: number, newTitle: string) => {
+    setTasks(prev =>
+      prev.map(task =>
+        task.id === id ? { ...task, title: newTitle } : task
+      )
+    );
+    setEditingTaskId(null);
+    setEditTitle('');
+  };
+
   const progressPercent = Math.round(
     (tasks.filter(task => task.status === 'done').length / tasks.length) * 100
   );
@@ -46,7 +59,29 @@ function App() {
             key={task.id}
             className={`task-box ${getColor(task.status)}`}
           >
-            <div>{task.title}</div>
+            {editingTaskId === task.id ? (
+              <input
+                type="text"
+                value={editTitle}
+                onChange={(e) => setEditTitle(e.target.value)}
+                onBlur={() => handleTitleChange(task.id, editTitle)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleTitleChange(task.id, editTitle);
+                  }
+                }}
+                autoFocus
+              />
+            ) : (
+              <div
+                onClick={() => {
+                  setEditingTaskId(task.id);
+                  setEditTitle(task.title);
+                }}
+              >
+                {task.title}
+              </div>
+            )}
             <select
               value={task.status}
               onChange={(e) => updateTaskStatus(task.id, e.target.value as Task['status'])}
