@@ -296,8 +296,6 @@ function App() {
       ));
   };
 
-  const renderColumns = (groupKey: string, groupValue: string) => {
-    const statuses = ['todo', 'doing', 'review', 'done'];
   const renderColumns = (groupValue: string) => {
     return (
       <div className="kanban-row">
