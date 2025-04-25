@@ -64,10 +64,10 @@ function App() {
 
   return (
     <div className="App">
-    <div className="task-header">
-      <h2 className="header">Task: Deploy application in dev</h2>
-      <button onClick={addNewTask} className="add-btn">+ Add Subgoal</button>
-    </div>
+      <div className="task-header">
+        <h2 className="header">Task: Deploy application in dev</h2>
+        <button onClick={addNewTask} className="add-btn">+ Add Subgoal</button>
+      </div>
 
       <div className="task-flow">
         {tasks.map(task => (
@@ -107,28 +107,26 @@ function App() {
               <option value="done">Done</option>
             </select>
             <button className="delete-btn" onClick={() => deleteTask(task.id)}>
-            <>{FaTrash({})}</>
+              <>{FaTrash({})}</>
             </button>
           </div>
         ))}
       </div>
 
       <div className="side-panel">
-      <div className="legend-box">
-        <h4>Legend</h4>
-        <p><span className="dot red"></span> To-Do</p>
-        <p><span className="dot yellow"></span> Doing</p>
-        <p><span className="dot green"></span> Done</p>
+        <div className="legend-box">
+          <h4>Legend</h4>
+          <p><span className="dot red"></span> To-Do</p>
+          <p><span className="dot yellow"></span> Doing</p>
+          <p><span className="dot green"></span> Done</p>
+        </div>
       </div>
-    </div>
 
       <div className="progress-bar-container">
         <div className="progress-bar" style={{ width: `${progressPercent}%` }}>
           Progress: {progressPercent}%
         </div>
       </div>
-
-
     </div>
   );
 }
