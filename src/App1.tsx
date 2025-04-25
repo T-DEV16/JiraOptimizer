@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FaTrash } from 'react-icons/fa';
-import './App.css';
+import './App1.css';
 
 type Task = {
   id: number;
@@ -63,17 +63,17 @@ function App() {
   );
 
   return (
-    <div className="App">
-    <div className="task-header">
-      <h2 className="header">Task: Deploy application in dev</h2>
-      <button onClick={addNewTask} className="add-btn">+ Add Subgoal</button>
-    </div>
+    <div className="App1">
+      <div className="app1-task-header">
+        Task: Deploy application in dev
+        <button onClick={addNewTask} className="app1-add-btn">+ Add Subgoal</button>
+      </div>
 
-      <div className="task-flow">
+      <div className="app1-task-flow">
         {tasks.map(task => (
           <div
             key={task.id}
-            className={`task-box ${getColor(task.status)}`}
+            className={`app1-task-box ${getColor(task.status)}`}
           >
             {editingTaskId === task.id ? (
               <input
@@ -106,29 +106,30 @@ function App() {
               <option value="doing">Doing</option>
               <option value="done">Done</option>
             </select>
-            <button className="delete-btn" onClick={() => deleteTask(task.id)}>
-            <>{FaTrash({})}</>
+            <button className="app1-delete-btn" onClick={() => deleteTask(task.id)}>
+              <>{FaTrash({})}</>
             </button>
           </div>
         ))}
       </div>
 
-      <div className="side-panel">
-      <div className="legend-box">
+      <div className="app1-legend-box">
         <h4>Legend</h4>
-        <p><span className="dot red"></span> To-Do</p>
-        <p><span className="dot yellow"></span> Doing</p>
-        <p><span className="dot green"></span> Done</p>
+        <p><span className="app1-dot red"></span> To-Do</p>
+        <p><span className="app1-dot yellow"></span> Doing</p>
+        <p><span className="app1-dot green"></span> Done</p>
       </div>
-    </div>
 
-      <div className="progress-bar-container">
-        <div className="progress-bar" style={{ width: `${progressPercent}%` }}>
-          Progress: {progressPercent}%
+      <div className="app1-progress-bar-container">
+        <span className="app1-progress-bar-label">Progress:</span>
+        <div className="app1-progress-bar">
+          <div
+            className="app1-progress-bar-fill"
+            style={{ width: `${progressPercent}%` }}
+          />
         </div>
+        <div className="app1-progress-bar-percent">{progressPercent}%</div>
       </div>
-
-
     </div>
   );
 }

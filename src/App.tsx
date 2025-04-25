@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import './App.css';
+import App1 from './App1';
 
 type Task = {
   storyPoints: number;
@@ -63,10 +64,12 @@ function TaskCard({
   task,
   moveTask,
   updateStoryPoints,
+  onClick,
 }: {
   task: Task;
   moveTask: (task: Task, newStatus: string, newAssignee?: string) => void;
   updateStoryPoints: (task: Task, newStoryPoints: number) => void;
+  onClick?: () => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [, drag] = useDrag(() => ({
@@ -94,6 +97,8 @@ function TaskCard({
       className="task-card"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      onClick={onClick}
+      style={{ cursor: 'pointer' }}
     >
       <div className="task-title">{task.title}</div>
       <div className="task-category" style={{ backgroundColor: getColor(task.category) }}>
@@ -170,6 +175,7 @@ function KanbanColumn({
   groupValue,
   groupBy,
   updateStoryPoints,
+  onTaskClick,
 }: {
   status: string;
   tasks: Task[];
@@ -177,6 +183,7 @@ function KanbanColumn({
   groupValue: string;
   groupBy: 'Assignee' | 'Category';
   updateStoryPoints: (task: Task, newStoryPoints: number) => void;
+  onTaskClick?: (task: Task) => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [, drop] = useDrop(() => ({
@@ -200,6 +207,7 @@ function KanbanColumn({
           task={task}
           moveTask={moveTask}
           updateStoryPoints={updateStoryPoints}
+          onClick={onTaskClick ? () => onTaskClick(task) : undefined}
         />
       ))}
     </div>
@@ -211,6 +219,7 @@ function App() {
   const [statuses, setStatuses] = useState<string[]>(['todo', 'doing', 'review', 'done']);
   const [filterCategory, setFilterCategory] = useState<string | null>(null);
   const [groupBy, setGroupBy] = useState<'Assignee' | 'Category'>('Assignee');
+  const [modalOpen, setModalOpen] = useState(false);
   const [assignees, setAssignees] = useState<string[]>(allAssignees); // Dynamic list of assignees
   const [collapsedRows, setCollapsedRows] = useState<Set<string>>(new Set()); // Tracks collapsed rows
 
@@ -262,9 +271,30 @@ function App() {
     });
   };
 
+  const handleTaskClick = () => {
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+  };
+
   const filteredTasks = filterCategory
     ? tasks.filter((task) => task.category === filterCategory)
     : tasks;
+
+  const renderTasks = (status: string, groupKey: string, groupValue: string) => {
+    return filteredTasks
+      .map((task) => (
+        <TaskCard
+          key={task.title}
+          task={task}
+          moveTask={moveTask}
+          updateStoryPoints={updateStoryPoints}
+          onClick={handleTaskClick}
+        />
+      ));
+  };
 
   const renderColumns = (groupValue: string) => {
     return (
@@ -282,6 +312,7 @@ function App() {
             groupValue={groupValue}
             groupBy={groupBy}
             updateStoryPoints={updateStoryPoints}
+            onTaskClick={handleTaskClick}
           />
         ))}
       </div>
@@ -369,6 +400,16 @@ function App() {
           </div>
         </div>
         {renderRows()}
+        {modalOpen && (
+          <div className="modal-overlay" onClick={closeModal}>
+            <div className="modal-content" onClick={e => e.stopPropagation()}>
+              <button className="modal-close" onClick={closeModal} style={{ float: 'right' }}>
+                &times;
+              </button>
+              <App1 />
+            </div>
+          </div>
+        )}
         <div
           className="add-assignee-icon"
           onClick={addNewAssignee}
