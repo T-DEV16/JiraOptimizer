@@ -6,7 +6,7 @@ import './App.css';
 type Task = {
   storyPoints: number;
   title: string;
-  status: 'todo' | 'doing' | 'review' | 'done';
+  status: string;
   category: string;
   assignee: string;
 };
@@ -23,6 +23,8 @@ const tasksData: Task[] = [
   { storyPoints: 5, title: 'Fix Bugs', status: 'done', category: 'Indiv Project', assignee: 'JV' },
 ];
 
+const allAssignees = ['RM', 'TD', 'Z', 'JV']; // List of all possible assignees
+
 const getColor = (category: string) => {
   switch (category) {
     case 'Final Project': return 'orange';
@@ -35,10 +37,10 @@ const getColor = (category: string) => {
 
 const getAssigneeColor = (assignee: string) => {
   switch (assignee) {
-    case 'RM': return '#FF9AA2'; // Darker pastel pink
-    case 'TD': return '#A2CFFE'; // Darker pastel blue
-    case 'Z': return '#B5EAD7'; // Darker pastel green
-    case 'JV': return '#FFDAC1'; // Darker pastel yellow
+    case 'RM': return '#FF9AA2'; // Pastel pink
+    case 'TD': return '#A2CFFE'; // Pastel blue
+    case 'Z': return '#B5EAD7'; // Pastel green
+    case 'JV': return '#FFDAC1'; // Pastel yellow
     default: return '#D3D3D3'; // Default gray
   }
 };
@@ -74,7 +76,7 @@ function TaskCard({
 
   const [hovered, setHovered] = useState(false);
 
-  drag(ref); // Attach the drag functionality to the ref
+  drag(ref);
 
   const handleIncrease = () => {
     updateStoryPoints(task, task.storyPoints + 1);
@@ -104,7 +106,7 @@ function TaskCard({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '2px', // Reduce the gap between arrows and story points
+            gap: '2px',
           }}
         >
           {hovered && (
@@ -115,8 +117,8 @@ function TaskCard({
                 cursor: 'pointer',
                 background: 'none',
                 border: 'none',
-                fontSize: '10px', // Smaller font size for arrows
-                padding: '0', // Remove padding to shrink hover area
+                fontSize: '10px',
+                padding: '0',
               }}
             >
               ◀
@@ -131,8 +133,8 @@ function TaskCard({
                 cursor: 'pointer',
                 background: 'none',
                 border: 'none',
-                fontSize: '10px', // Smaller font size for arrows
-                padding: '0', // Remove padding to shrink hover area
+                fontSize: '10px',
+                padding: '0',
               }}
             >
               ▶
@@ -141,7 +143,18 @@ function TaskCard({
         </div>
         <span
           className="task-assignee"
-          style={{ backgroundColor: getAssigneeColor(task.assignee) }}
+          style={{
+            backgroundColor: getAssigneeColor(task.assignee),
+            color: 'white',
+            borderRadius: '50%',
+            width: '24px',
+            height: '24px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '12px',
+            fontWeight: 'bold',
+          }}
         >
           {task.assignee}
         </span>
@@ -171,11 +184,13 @@ function KanbanColumn({
     drop: (item: { task: Task }) => {
       if (groupBy === 'Assignee') {
         moveTask(item.task, status, groupValue); // Allow moving to a different row only if grouped by Assignee
+      } else {
+        moveTask(item.task, status); // Default behavior for other groupings
       }
     },
   }));
 
-  drop(ref); // Attach the drop functionality to the ref
+  drop(ref);
 
   return (
     <div ref={ref} className="kanban-column">
@@ -193,8 +208,11 @@ function KanbanColumn({
 
 function App() {
   const [tasks, setTasks] = useState<Task[]>(tasksData);
+  const [statuses, setStatuses] = useState<string[]>(['todo', 'doing', 'review', 'done']);
   const [filterCategory, setFilterCategory] = useState<string | null>(null);
   const [groupBy, setGroupBy] = useState<'Assignee' | 'Category'>('Assignee');
+  const [assignees, setAssignees] = useState<string[]>(allAssignees); // Dynamic list of assignees
+  const [collapsedRows, setCollapsedRows] = useState<Set<string>>(new Set()); // Tracks collapsed rows
 
   const moveTask = (task: Task, newStatus: string, newGroupValue?: string) => {
     setTasks((prevTasks) =>
@@ -202,7 +220,7 @@ function App() {
         t.title === task.title
           ? {
               ...t,
-              status: newStatus as Task['status'],
+              status: newStatus,
               ...(groupBy === 'Assignee' ? { assignee: newGroupValue || t.assignee } : {}),
             }
           : t
@@ -218,34 +236,37 @@ function App() {
     );
   };
 
-  const handleFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = event.target.value;
-    setFilterCategory(value === 'All' ? null : value);
+  const addNewColumn = () => {
+    const newColumnName = prompt('Enter the name of the new column:');
+    if (newColumnName && !statuses.includes(newColumnName.toLowerCase())) {
+      setStatuses((prevStatuses) => [...prevStatuses, newColumnName.toLowerCase()]);
+    }
   };
 
-  const handleGroupByChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setGroupBy(event.target.value as 'Assignee' | 'Category');
+  const addNewAssignee = () => {
+    const newAssignee = prompt('Enter the initials of the new assignee (e.g., AB):');
+    if (newAssignee && !assignees.includes(newAssignee)) {
+      setAssignees((prevAssignees) => [...prevAssignees, newAssignee]);
+    }
+  };
+
+  const toggleRowCollapse = (groupValue: string) => {
+    setCollapsedRows((prevCollapsedRows) => {
+      const newCollapsedRows = new Set(prevCollapsedRows);
+      if (newCollapsedRows.has(groupValue)) {
+        newCollapsedRows.delete(groupValue);
+      } else {
+        newCollapsedRows.add(groupValue);
+      }
+      return newCollapsedRows;
+    });
   };
 
   const filteredTasks = filterCategory
     ? tasks.filter((task) => task.category === filterCategory)
     : tasks;
 
-  const renderTasks = (status: string, groupKey: string, groupValue: string) => {
-    return filteredTasks
-      .filter((task) => task.status === status && task[groupKey as keyof Task] === groupValue)
-      .map((task) => (
-        <TaskCard
-          key={task.title}
-          task={task}
-          moveTask={moveTask}
-          updateStoryPoints={updateStoryPoints}
-        />
-      ));
-  };
-
-  const renderColumns = (groupKey: string, groupValue: string) => {
-    const statuses = ['todo', 'doing', 'review', 'done'];
+  const renderColumns = (groupValue: string) => {
     return (
       <div className="kanban-row">
         {statuses.map((status) => (
@@ -254,7 +275,8 @@ function App() {
             status={status}
             tasks={filteredTasks.filter(
               (task) =>
-                task.status === status && task[groupKey as keyof Task] === groupValue
+                task.status === status &&
+                (groupBy === 'Assignee' ? task.assignee === groupValue : task.category === groupValue)
             )}
             moveTask={moveTask}
             groupValue={groupValue}
@@ -269,19 +291,28 @@ function App() {
   const renderRows = () => {
     const groupValues =
       groupBy === 'Assignee'
-        ? [...new Set(tasks.map((task) => task.assignee))].sort((a, b) =>
-            getAssigneeName(a).localeCompare(getAssigneeName(b))
-          )
+        ? assignees // Use the dynamic list of assignees
         : [...new Set(tasks.map((task) => task.category))].sort();
 
-    return groupValues.map((groupValue) => (
-      <div key={groupValue}>
-        <h2 className="assignee-header">
-          {groupBy === 'Assignee' ? getAssigneeName(groupValue) : groupValue}
-        </h2>
-        {renderColumns(groupBy.toLowerCase(), groupValue)}
-      </div>
-    ));
+    return groupValues.map((groupValue) => {
+      const isCollapsed = collapsedRows.has(groupValue);
+
+      return (
+        <div key={groupValue}>
+          <h3
+            className="group-header"
+            style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+            onClick={() => toggleRowCollapse(groupValue)}
+          >
+            <span style={{ marginRight: '10px' }}>
+              {isCollapsed ? '▶' : '▼'}
+            </span>
+            {groupBy === 'Assignee' ? getAssigneeName(groupValue) || groupValue : groupValue}
+          </h3>
+          {!isCollapsed && renderColumns(groupValue)}
+        </div>
+      );
+    });
   };
 
   return (
@@ -294,7 +325,7 @@ function App() {
               <label htmlFor="category-filter">Filter:</label>
               <select
                 id="category-filter"
-                onChange={handleFilterChange}
+                onChange={(e) => setFilterCategory(e.target.value === 'All' ? null : e.target.value)}
                 value={filterCategory || 'All'}
               >
                 <option value="All">All</option>
@@ -308,7 +339,7 @@ function App() {
               <label htmlFor="group-by">Group By:</label>
               <select
                 id="group-by"
-                onChange={handleGroupByChange}
+                onChange={(e) => setGroupBy(e.target.value as 'Assignee' | 'Category')}
                 value={groupBy}
               >
                 <option value="Assignee">Assignee</option>
@@ -317,13 +348,41 @@ function App() {
             </div>
           </div>
         </div>
-        <div className="kanban-labels">
-          <div className="kanban-label">TO DO</div>
-          <div className="kanban-label">IN PROGRESS</div>
-          <div className="kanban-label">IN REVIEW</div>
-          <div className="kanban-label">DONE</div>
+        <div className="kanban-labels" style={{ display: 'flex', alignItems: 'center' }}>
+          {statuses.map((status) => (
+            <div key={status} className="kanban-label">
+              {status.toUpperCase()}
+            </div>
+          ))}
+          <div
+            className="add-column-icon"
+            onClick={addNewColumn}
+            style={{
+              cursor: 'pointer',
+              fontSize: '20px',
+              marginLeft: '10px',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            +
+          </div>
         </div>
         {renderRows()}
+        <div
+          className="add-assignee-icon"
+          onClick={addNewAssignee}
+          style={{
+            marginTop: '20px',
+            cursor: 'pointer',
+            fontSize: '20px',
+            marginLeft: '10px',
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
+          +
+        </div>
       </div>
     </DndProvider>
   );
