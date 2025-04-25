@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FaTrash } from 'react-icons/fa';
-import './App1.css';
+import './Subgoal_Planner.css';
 
 type Task = {
   id: number;
@@ -8,7 +8,7 @@ type Task = {
   status: 'todo' | 'doing' | 'done';
 };
 
-function App() {
+function Subgoal_Planner() {
   const [tasks, setTasks] = useState<Task[]>([
     { id: 1, title: 'Deploy', status: 'todo' },
     { id: 2, title: 'Test it', status: 'todo' },
@@ -134,4 +134,4 @@ function App() {
   );
 }
 
-export default App;
+export default Subgoal_Planner;

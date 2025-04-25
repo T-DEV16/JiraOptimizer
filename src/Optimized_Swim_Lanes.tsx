@@ -1,8 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import './App.css';
-import App1 from './App1';
+import './Optimized_Swim_Lanes.css';
+import Subgoal_Planner from './Subgoal_Planner';
 
 type Task = {
   storyPoints: number;
@@ -214,7 +214,7 @@ function KanbanColumn({
   );
 }
 
-function App() {
+function Optimized_Swim_Lanes() {
   const [tasks, setTasks] = useState<Task[]>(tasksData);
   const [statuses, setStatuses] = useState<string[]>(['todo', 'doing', 'review', 'done']);
   const [filterCategory, setFilterCategory] = useState<string | null>(null);
@@ -406,7 +406,7 @@ function App() {
               <button className="modal-close" onClick={closeModal} style={{ float: 'right' }}>
                 &times;
               </button>
-              <App1 />
+              <Subgoal_Planner />
             </div>
           </div>
         )}
@@ -429,4 +429,4 @@ function App() {
   );
 }
 
-export default App;
+export default Optimized_Swim_Lanes;
