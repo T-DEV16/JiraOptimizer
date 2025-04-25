@@ -1,0 +1,156 @@
+.App1 {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.app1-task-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  background: #d6eaff;
+  border-radius: 10px;
+  padding: 16px 32px;
+  width: fit-content;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #222;
+}
+
+.app1-add-btn {
+  margin-left: 24px;
+  background: #3973f7;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.app1-add-btn:hover {
+  background: #2456b3;
+}
+
+.app1-task-flow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.app1-task-box {
+  min-width: 320px;
+  min-height: 60px;
+  border-radius: 16px;
+  padding: 18px 24px;
+  margin: 0 0 8px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 1.2rem;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  background: #eee;
+  transition: background 0.2s;
+}
+.app1-task-box.red { background: #f77b7b; color: #fff; }
+.app1-task-box.yellow { background: #ffe066; color: #333; }
+.app1-task-box.green { background: #a8f7b7; color: #222; }
+
+.app1-task-box input[type="text"] {
+  font-size: 1.1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  padding: 4px 8px;
+  margin-right: 8px;
+}
+
+.app1-task-box select {
+  margin-left: 12px;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #bbb;
+  padding: 2px 8px;
+}
+
+.app1-delete-btn {
+  background: none;
+  border: none;
+  color: #444;
+  font-size: 1.2rem;
+  margin-left: 10px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.app1-delete-btn:hover {
+  color: #b30000;
+}
+
+.app1-legend-box {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+  padding: 18px 24px;
+  margin-bottom: 18px;
+  margin-right: 24px;
+  position: absolute;
+  left: 0;
+  top: 120px;
+  min-width: 120px;
+  z-index: 2;
+}
+.app1-legend-box h4 {
+  margin: 0 0 8px 0;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+.app1-dot {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+.app1-dot.red { background: #f77b7b; }
+.app1-dot.yellow { background: #ffe066; }
+.app1-dot.green { background: #a8f7b7; }
+
+.app1-progress-bar-container {
+  width: 320px;
+  margin: 24px auto 0 auto;
+  text-align: left;
+}
+.app1-progress-bar-label {
+  font-weight: bold;
+  background: #a8f7b7;
+  padding: 4px 12px;
+  border-radius: 6px 6px 0 0;
+  display: inline-block;
+}
+.app1-progress-bar {
+  width: 100%;
+  height: 24px;
+  background: #eee;
+  border: 1px solid #bbb;
+  border-radius: 0 0 6px 6px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+.app1-progress-bar-fill {
+  height: 100%;
+  background: #a8f7b7;
+  transition: width 0.3s;
+}
+.app1-progress-bar-percent {
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-top: 2px;
+}
