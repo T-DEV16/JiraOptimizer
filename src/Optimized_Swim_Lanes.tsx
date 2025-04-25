@@ -12,6 +12,19 @@ type Task = {
   assignee: string;
 };
 
+type Subgoal = {
+  id: number;
+  title: string;
+  status: 'todo' | 'doing' | 'done';
+};
+
+const defaultSubgoals: Subgoal[] = [
+  { id: 1, title: 'Deploy', status: 'todo' },
+  { id: 2, title: 'Test it', status: 'todo' },
+  { id: 3, title: 'Subgoal Label', status: 'done' },
+  { id: 4, title: 'Subgoal Label', status: 'done' },
+];
+
 const tasksData: Task[] = [
   { storyPoints: 2, title: 'Final Evaluation Results', status: 'todo', category: 'Final Project', assignee: 'RM' },
   { storyPoints: 3, title: 'Final Exam', status: 'todo', category: 'Tests', assignee: 'RM' },
@@ -219,9 +232,12 @@ function Optimized_Swim_Lanes() {
   const [statuses, setStatuses] = useState<string[]>(['todo', 'doing', 'review', 'done']);
   const [filterCategory, setFilterCategory] = useState<string | null>(null);
   const [groupBy, setGroupBy] = useState<'Assignee' | 'Category'>('Assignee');
-  const [modalOpen, setModalOpen] = useState(false);
   const [assignees, setAssignees] = useState<string[]>(allAssignees); // Dynamic list of assignees
   const [collapsedRows, setCollapsedRows] = useState<Set<string>>(new Set()); // Tracks collapsed rows
+
+  // New state for per-task subgoals and modal
+  const [subgoalsByTask, setSubgoalsByTask] = useState<{ [taskTitle: string]: Subgoal[] }>({});
+  const [openTaskTitle, setOpenTaskTitle] = useState<string | null>(null);
 
   const moveTask = (task: Task, newStatus: string, newGroupValue?: string) => {
     setTasks((prevTasks) =>
@@ -271,12 +287,26 @@ function Optimized_Swim_Lanes() {
     });
   };
 
-  const handleTaskClick = () => {
-    setModalOpen(true);
+  // Open modal for a specific task, initializing subgoals if needed
+  const handleTaskClick = (task: Task) => {
+    setOpenTaskTitle(task.title);
+    setSubgoalsByTask(prev => {
+      if (prev[task.title]) return prev;
+      // Initialize with default subgoals if not present
+      return { ...prev, [task.title]: defaultSubgoals.map(sg => ({ ...sg })) };
+    });
   };
 
   const closeModal = () => {
-    setModalOpen(false);
+    setOpenTaskTitle(null);
+  };
+
+  // Update subgoals for a specific task
+  const updateSubgoalsForTask = (taskTitle: string, newSubgoals: Subgoal[]) => {
+    setSubgoalsByTask(prev => ({
+      ...prev,
+      [taskTitle]: newSubgoals,
+    }));
   };
 
   const filteredTasks = filterCategory
@@ -291,7 +321,7 @@ function Optimized_Swim_Lanes() {
           task={task}
           moveTask={moveTask}
           updateStoryPoints={updateStoryPoints}
-          onClick={handleTaskClick}
+          onClick={() => handleTaskClick(task)}
         />
       ));
   };
@@ -400,13 +430,17 @@ function Optimized_Swim_Lanes() {
           </div>
         </div>
         {renderRows()}
-        {modalOpen && (
+        {openTaskTitle && (
           <div className="modal-overlay" onClick={closeModal}>
             <div className="modal-content" onClick={e => e.stopPropagation()}>
               <button className="modal-close" onClick={closeModal} style={{ float: 'right' }}>
                 &times;
               </button>
-              <Subgoal_Planner />
+              <Subgoal_Planner
+                subgoals={subgoalsByTask[openTaskTitle] || []}
+                setSubgoals={newSubgoals => updateSubgoalsForTask(openTaskTitle, newSubgoals)}
+                taskTitle={openTaskTitle}
+              />
             </div>
           </div>
         )}
