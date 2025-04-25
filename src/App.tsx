@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import './App.css';
@@ -61,14 +61,10 @@ function TaskCard({
   task,
   moveTask,
   updateStoryPoints,
-  activeCard,
-  setActiveCard,
 }: {
   task: Task;
   moveTask: (task: Task, newStatus: string, newAssignee?: string) => void;
   updateStoryPoints: (task: Task, newStoryPoints: number) => void;
-  activeCard: string | null;
-  setActiveCard: (cardId: string | null) => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [, drag] = useDrag(() => ({
@@ -76,11 +72,9 @@ function TaskCard({
     item: { task },
   }));
 
-  drag(ref); // Attach the drag functionality to the ref
+  const [hovered, setHovered] = useState(false);
 
-  const handleStoryPointsClick = () => {
-    setActiveCard(task.title === activeCard ? null : task.title);
-  };
+  drag(ref); // Attach the drag functionality to the ref
 
   const handleIncrease = () => {
     updateStoryPoints(task, task.storyPoints + 1);
@@ -93,25 +87,58 @@ function TaskCard({
   };
 
   return (
-    <div ref={ref} className="task-card">
+    <div
+      ref={ref}
+      className="task-card"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
       <div className="task-title">{task.title}</div>
       <div className="task-category" style={{ backgroundColor: getColor(task.category) }}>
         {task.category}
       </div>
       <div className="task-footer">
-        <span
-          className="task-story-points"
-          onClick={handleStoryPointsClick}
-          style={{ cursor: 'pointer' }}
+        <div
+          className="story-points-container"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '2px', // Reduce the gap between arrows and story points
+          }}
         >
-          {task.storyPoints}
-        </span>
-        {activeCard === task.title && (
-          <div className="story-points-toggle" style={{ display: 'inline-block', marginLeft: '10px' }}>
-            <button onClick={handleIncrease}>+</button>
-            <button onClick={handleDecrease}>-</button>
-          </div>
-        )}
+          {hovered && (
+            <button
+              className="story-points-arrow"
+              onClick={handleDecrease}
+              style={{
+                cursor: 'pointer',
+                background: 'none',
+                border: 'none',
+                fontSize: '10px', // Smaller font size for arrows
+                padding: '0', // Remove padding to shrink hover area
+              }}
+            >
+              ◀
+            </button>
+          )}
+          <span className="task-story-points">{task.storyPoints}</span>
+          {hovered && (
+            <button
+              className="story-points-arrow"
+              onClick={handleIncrease}
+              style={{
+                cursor: 'pointer',
+                background: 'none',
+                border: 'none',
+                fontSize: '10px', // Smaller font size for arrows
+                padding: '0', // Remove padding to shrink hover area
+              }}
+            >
+              ▶
+            </button>
+          )}
+        </div>
         <span
           className="task-assignee"
           style={{ backgroundColor: getAssigneeColor(task.assignee) }}
@@ -129,16 +156,14 @@ function KanbanColumn({
   moveTask,
   groupValue,
   groupBy,
-  activeCard,
-  setActiveCard,
+  updateStoryPoints,
 }: {
   status: string;
   tasks: Task[];
   moveTask: (task: Task, newStatus: string, newGroupValue?: string) => void;
   groupValue: string;
   groupBy: 'Assignee' | 'Category';
-  activeCard: string | null;
-  setActiveCard: (cardId: string | null) => void;
+  updateStoryPoints: (task: Task, newStoryPoints: number) => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [, drop] = useDrop(() => ({
@@ -159,9 +184,7 @@ function KanbanColumn({
           key={task.title}
           task={task}
           moveTask={moveTask}
-          updateStoryPoints={() => {}}
-          activeCard={activeCard}
-          setActiveCard={setActiveCard}
+          updateStoryPoints={updateStoryPoints}
         />
       ))}
     </div>
@@ -172,7 +195,6 @@ function App() {
   const [tasks, setTasks] = useState<Task[]>(tasksData);
   const [filterCategory, setFilterCategory] = useState<string | null>(null);
   const [groupBy, setGroupBy] = useState<'Assignee' | 'Category'>('Assignee');
-  const [activeCard, setActiveCard] = useState<string | null>(null);
 
   const moveTask = (task: Task, newStatus: string, newGroupValue?: string) => {
     setTasks((prevTasks) =>
@@ -218,8 +240,6 @@ function App() {
           task={task}
           moveTask={moveTask}
           updateStoryPoints={updateStoryPoints}
-          activeCard={activeCard}
-          setActiveCard={setActiveCard}
         />
       ));
   };
@@ -239,8 +259,7 @@ function App() {
             moveTask={moveTask}
             groupValue={groupValue}
             groupBy={groupBy}
-            activeCard={activeCard}
-            setActiveCard={setActiveCard}
+            updateStoryPoints={updateStoryPoints}
           />
         ))}
       </div>
@@ -265,20 +284,9 @@ function App() {
     ));
   };
 
-  useEffect(() => {
-    const handleClickOutside = () => {
-      setActiveCard(null);
-    };
-
-    document.addEventListener('click', handleClickOutside);
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
-  }, []);
-
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="App" onClick={(e) => e.stopPropagation()}>
+      <div className="App">
         <div className="header-container">
           <h1 className="kanban-title">BOARD</h1>
           <div className="filter-group-container">
