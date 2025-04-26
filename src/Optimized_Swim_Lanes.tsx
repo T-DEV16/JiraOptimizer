@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import './Optimized_Swim_Lanes.css';
@@ -36,6 +36,22 @@ const tasksData: Task[] = [
   { storyPoints: 4, title: 'Design Mockups', status: 'review', category: 'Final Project', assignee: 'JV' },
   { storyPoints: 5, title: 'Fix Bugs', status: 'done', category: 'Indiv Project', assignee: 'JV' },
 ];
+
+// Load from localStorage if available
+function loadTasksFromStorage(): Task[] {
+  try {
+    const data = localStorage.getItem('swimlane_tasks');
+    if (data) return JSON.parse(data);
+  } catch {}
+  return tasksData;
+}
+function loadSubgoalsFromStorage(): { [taskTitle: string]: Subgoal[] } {
+  try {
+    const data = localStorage.getItem('swimlane_subgoals');
+    if (data) return JSON.parse(data);
+  } catch {}
+  return {};
+}
 
 const allAssignees = ['RM', 'TD', 'Z', 'JV'];
 
@@ -293,7 +309,7 @@ function LegendPopup({ onClose }: { onClose: () => void }) {
 }
 
 function Optimized_Swim_Lanes() {
-  const [tasks, setTasks] = useState<Task[]>(tasksData);
+  const [tasks, setTasks] = useState<Task[]>(loadTasksFromStorage());
   const [statuses, setStatuses] = useState<string[]>(['todo', 'doing', 'review', 'done']);
   const [filterCategory, setFilterCategory] = useState<string | null>(null);
   const [groupBy, setGroupBy] = useState<'Assignee' | 'Category'>('Assignee');
@@ -302,8 +318,26 @@ function Optimized_Swim_Lanes() {
   const [legendOpen, setLegendOpen] = useState(false);
 
   // New state for per-task subgoals and modal
-  const [subgoalsByTask, setSubgoalsByTask] = useState<{ [taskTitle: string]: Subgoal[] }>({});
+  const [subgoalsByTask, setSubgoalsByTask] = useState<{ [taskTitle: string]: Subgoal[] }>(loadSubgoalsFromStorage());
   const [openTaskTitle, setOpenTaskTitle] = useState<string | null>(null);
+
+  // New Task Modal state
+  const [newTaskModalOpen, setNewTaskModalOpen] = useState(false);
+  const [newTask, setNewTask] = useState<Partial<Task>>({
+    title: '',
+    category: '',
+    storyPoints: 1,
+    assignee: allAssignees[0],
+    status: 'todo',
+  });
+
+  // Persist to localStorage on change
+  useEffect(() => {
+    localStorage.setItem('swimlane_tasks', JSON.stringify(tasks));
+  }, [tasks]);
+  useEffect(() => {
+    localStorage.setItem('swimlane_subgoals', JSON.stringify(subgoalsByTask));
+  }, [subgoalsByTask]);
 
   const moveTask = (task: Task, newStatus: string, newGroupValue?: string) => {
     setTasks((prevTasks) =>
@@ -485,6 +519,23 @@ function Optimized_Swim_Lanes() {
       <div className="App">
         <div className="header-container">
           <h1 className="kanban-title">BOARD</h1>
+          <button
+            style={{
+              marginLeft: 20,
+              padding: '8px 18px',
+              borderRadius: 8,
+              border: '1px solid #3973f7',
+              background: '#3973f7',
+              color: '#fff',
+              fontWeight: 600,
+              fontSize: '1rem',
+              cursor: 'pointer',
+              marginRight: 20,
+            }}
+            onClick={() => setNewTaskModalOpen(true)}
+          >
+            + New Task Card
+          </button>
           <div className="filter-group-container" style={{ alignItems: 'center', display: 'flex' }}>
             <div className="filter-container">
               <label htmlFor="category-filter">Filter:</label>
@@ -563,6 +614,116 @@ function Optimized_Swim_Lanes() {
           </div>
         )}
         {legendOpen && <LegendPopup onClose={() => setLegendOpen(false)} />}
+
+        {newTaskModalOpen && (
+          <div className="modal-overlay" onClick={() => setNewTaskModalOpen(false)}>
+            <div className="modal-content" onClick={e => e.stopPropagation()} style={{ minWidth: 340 }}>
+              <button className="modal-close" onClick={() => setNewTaskModalOpen(false)} style={{ float: 'right' }}>
+                &times;
+              </button>
+              <h2 style={{ marginTop: 0 }}>New Task Card</h2>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <label>
+                  Title:
+                  <input
+                    type="text"
+                    value={newTask.title}
+                    onChange={e => setNewTask({ ...newTask, title: e.target.value })}
+                    style={{ width: '100%', marginTop: 4 }}
+                  />
+                </label>
+                <label>
+                  Category:
+                  <input
+                    type="text"
+                    value={newTask.category}
+                    onChange={e => setNewTask({ ...newTask, category: e.target.value })}
+                    style={{ width: '100%', marginTop: 4 }}
+                  />
+                </label>
+                <label>
+                  Story Points:
+                  <input
+                    type="number"
+                    min={1}
+                    value={newTask.storyPoints}
+                    onChange={e => setNewTask({ ...newTask, storyPoints: Number(e.target.value) })}
+                    style={{ width: 80, marginTop: 4 }}
+                  />
+                </label>
+                <label>
+                  Assignee:
+                  <select
+                    value={newTask.assignee}
+                    onChange={e => setNewTask({ ...newTask, assignee: e.target.value })}
+                    style={{ width: '100%', marginTop: 4 }}
+                  >
+                    {allAssignees.map(a => (
+                      <option key={a} value={a}>{getAssigneeName(a) || a}</option>
+                    ))}
+                  </select>
+                </label>
+                <div style={{ display: 'flex', gap: 12, marginTop: 16 }}>
+                  <button
+                    style={{
+                      background: '#3973f7',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: 6,
+                      padding: '8px 18px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                    }}
+                    onClick={() => {
+                      if (!newTask.title || !newTask.category || !newTask.assignee) return;
+                      setTasks(prev => [
+                        ...prev,
+                        {
+                          title: newTask.title!,
+                          category: newTask.category!,
+                          storyPoints: newTask.storyPoints || 1,
+                          assignee: newTask.assignee!,
+                          status: 'todo',
+                        },
+                      ]);
+                      setSubgoalsByTask(prev => ({
+                        ...prev,
+                        [newTask.title!]: defaultSubgoals.map(sg => ({ ...sg })),
+                      }));
+                      setNewTaskModalOpen(false);
+                      setNewTask({
+                        title: '',
+                        category: '',
+                        storyPoints: 1,
+                        assignee: allAssignees[0],
+                        status: 'todo',
+                      });
+                    }}
+                  >
+                    Save
+                  </button>
+                  <button
+                    style={{
+                      background: '#eee',
+                      color: '#333',
+                      border: '1px solid #ccc',
+                      borderRadius: 6,
+                      padding: '8px 18px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                    }}
+                    onClick={() => setNewTaskModalOpen(false)}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+              <div style={{ marginTop: 24, fontSize: 13, color: '#888' }}>
+                <b>Tip:</b> See the Legend for an example task card.
+              </div>
+            </div>
+          </div>
+        )}
         <div
           className="add-assignee-icon"
           onClick={addNewAssignee}
