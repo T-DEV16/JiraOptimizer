@@ -24,7 +24,7 @@ const tasksData: Task[] = [
   { storyPoints: 5, title: 'Fix Bugs', status: 'done', category: 'Indiv Project', assignee: 'JV' },
 ];
 
-const allAssignees = ['RM', 'TD', 'Z', 'JV']; // List of all possible assignees
+const allAssignees = ['RM', 'TD', 'Z', 'JV'];
 
 const getColor = (category: string) => {
   switch (category) {
@@ -38,11 +38,11 @@ const getColor = (category: string) => {
 
 const getAssigneeColor = (assignee: string) => {
   switch (assignee) {
-    case 'RM': return '#FF9AA2'; // Pastel pink
-    case 'TD': return '#A2CFFE'; // Pastel blue
-    case 'Z': return '#B5EAD7'; // Pastel green
-    case 'JV': return '#FFDAC1'; // Pastel yellow
-    default: return '#D3D3D3'; // Default gray
+    case 'RM': return '#FF9AA2';
+    case 'TD': return '#A2CFFE';
+    case 'Z': return '#B5EAD7';
+    case 'JV': return '#FFDAC1';
+    default: return '#D3D3D3';
   }
 };
 
@@ -64,12 +64,12 @@ function TaskCard({
   task,
   moveTask,
   updateStoryPoints,
-  onClick,
+  onTaskCardClick,
 }: {
   task: Task;
   moveTask: (task: Task, newStatus: string, newAssignee?: string) => void;
   updateStoryPoints: (task: Task, newStoryPoints: number) => void;
-  onClick?: () => void;
+  onTaskCardClick?: (task: Task) => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [, drag] = useDrag(() => ({
@@ -81,11 +81,27 @@ function TaskCard({
 
   drag(ref);
 
-  const handleIncrease = () => {
+  // Only trigger Subgoal_Planner if click is in top half or right half
+  const handleCardClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    if (!onTaskCardClick) return;
+    const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
+    const y = e.clientY - rect.top;
+    const x = e.clientX - rect.left;
+    const height = rect.height;
+    const width = rect.width;
+    // Top half or right half
+    if (y < height / 2 || x > width / 2) {
+      onTaskCardClick(task);
+    }
+  };
+
+  const handleIncrease = (e: React.MouseEvent) => {
+    e.stopPropagation();
     updateStoryPoints(task, task.storyPoints + 1);
   };
 
-  const handleDecrease = () => {
+  const handleDecrease = (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (task.storyPoints > 0) {
       updateStoryPoints(task, task.storyPoints - 1);
     }
@@ -97,7 +113,7 @@ function TaskCard({
       className="task-card"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      onClick={onClick}
+      onClick={handleCardClick}
       style={{ cursor: 'pointer' }}
     >
       <div className="task-title">{task.title}</div>
@@ -175,7 +191,7 @@ function KanbanColumn({
   groupValue,
   groupBy,
   updateStoryPoints,
-  onTaskClick,
+  onTaskCardClick,
 }: {
   status: string;
   tasks: Task[];
@@ -183,16 +199,16 @@ function KanbanColumn({
   groupValue: string;
   groupBy: 'Assignee' | 'Category';
   updateStoryPoints: (task: Task, newStoryPoints: number) => void;
-  onTaskClick?: (task: Task) => void;
+  onTaskCardClick?: (task: Task) => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [, drop] = useDrop(() => ({
     accept: ItemType.TASK,
     drop: (item: { task: Task }) => {
       if (groupBy === 'Assignee') {
-        moveTask(item.task, status, groupValue); // Allow moving to a different row only if grouped by Assignee
+        moveTask(item.task, status, groupValue);
       } else {
-        moveTask(item.task, status); // Default behavior for other groupings
+        moveTask(item.task, status);
       }
     },
   }));
@@ -207,9 +223,58 @@ function KanbanColumn({
           task={task}
           moveTask={moveTask}
           updateStoryPoints={updateStoryPoints}
-          onClick={onTaskClick ? () => onTaskClick(task) : undefined}
+          onTaskCardClick={onTaskCardClick}
         />
       ))}
+    </div>
+  );
+}
+
+// Legend popup component
+function LegendPopup({ onClose }: { onClose: () => void }) {
+  const [exampleTask, setExampleTask] = React.useState({
+    storyPoints: 3,
+    title: 'Example Task',
+    status: 'doing',
+    category: 'Final Project',
+    assignee: 'RM',
+  });
+
+  // Dummy functions for moveTask and onTaskCardClick
+  const moveTask = () => {};
+  const onTaskCardClick = () => {};
+
+  const updateStoryPoints = (_task: typeof exampleTask, newStoryPoints: number) => {
+    setExampleTask((prev) => ({
+      ...prev,
+      storyPoints: newStoryPoints,
+    }));
+  };
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: 350 }}>
+        <button className="modal-close" onClick={onClose} style={{ float: 'right' }}>
+          &times;
+        </button>
+        <h3 style={{ marginTop: 0 }}>Task Card Example</h3>
+        <div style={{ margin: '20px 0' }}>
+          <TaskCard
+            task={exampleTask}
+            moveTask={moveTask}
+            updateStoryPoints={updateStoryPoints}
+            onTaskCardClick={onTaskCardClick}
+          />
+        </div>
+        <div>
+          <ul style={{ fontSize: 14, paddingLeft: 20 }}>
+            <li><b>Title</b>: Task name</li>
+            <li><b>Category color bar</b>: Category of the task</li>
+            <li><b>Story points</b>: Number with arrows (hover to see arrows)</li>
+            <li><b>Assignee circle</b>: Initials of assignee</li>
+          </ul>
+        </div>
+      </div>
     </div>
   );
 }
@@ -220,8 +285,10 @@ function Optimized_Swim_Lanes() {
   const [filterCategory, setFilterCategory] = useState<string | null>(null);
   const [groupBy, setGroupBy] = useState<'Assignee' | 'Category'>('Assignee');
   const [modalOpen, setModalOpen] = useState(false);
-  const [assignees, setAssignees] = useState<string[]>(allAssignees); // Dynamic list of assignees
-  const [collapsedRows, setCollapsedRows] = useState<Set<string>>(new Set()); // Tracks collapsed rows
+  const [assignees, setAssignees] = useState<string[]>(allAssignees);
+  const [collapsedRows, setCollapsedRows] = useState<Set<string>>(new Set());
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [legendOpen, setLegendOpen] = useState(false);
 
   const moveTask = (task: Task, newStatus: string, newGroupValue?: string) => {
     setTasks((prevTasks) =>
@@ -271,30 +338,19 @@ function Optimized_Swim_Lanes() {
     });
   };
 
-  const handleTaskClick = () => {
+  const handleTaskCardClick = (task: Task) => {
+    setSelectedTask(task);
     setModalOpen(true);
   };
 
   const closeModal = () => {
     setModalOpen(false);
+    setSelectedTask(null);
   };
 
   const filteredTasks = filterCategory
     ? tasks.filter((task) => task.category === filterCategory)
     : tasks;
-
-  const renderTasks = (status: string, groupKey: string, groupValue: string) => {
-    return filteredTasks
-      .map((task) => (
-        <TaskCard
-          key={task.title}
-          task={task}
-          moveTask={moveTask}
-          updateStoryPoints={updateStoryPoints}
-          onClick={handleTaskClick}
-        />
-      ));
-  };
 
   const renderColumns = (groupValue: string) => {
     return (
@@ -312,7 +368,7 @@ function Optimized_Swim_Lanes() {
             groupValue={groupValue}
             groupBy={groupBy}
             updateStoryPoints={updateStoryPoints}
-            onTaskClick={handleTaskClick}
+            onTaskCardClick={handleTaskCardClick}
           />
         ))}
       </div>
@@ -322,7 +378,7 @@ function Optimized_Swim_Lanes() {
   const renderRows = () => {
     const groupValues =
       groupBy === 'Assignee'
-        ? assignees // Use the dynamic list of assignees
+        ? assignees
         : [...new Set(tasks.map((task) => task.category))].sort();
 
     return groupValues.map((groupValue) => {
@@ -335,8 +391,16 @@ function Optimized_Swim_Lanes() {
             style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
             onClick={() => toggleRowCollapse(groupValue)}
           >
-            <span style={{ marginRight: '10px' }}>
-              {isCollapsed ? '▶' : '▼'}
+            <span
+              style={{
+                marginRight: '8px',
+                fontSize: '10px',
+                display: 'inline-block',
+                transform: isCollapsed ? 'rotate(0deg)' : 'rotate(90deg)',
+                transition: 'transform 0.2s ease',
+              }}
+            >
+              ▶
             </span>
             {groupBy === 'Assignee' ? getAssigneeName(groupValue) || groupValue : groupValue}
           </h3>
@@ -351,7 +415,7 @@ function Optimized_Swim_Lanes() {
       <div className="App">
         <div className="header-container">
           <h1 className="kanban-title">BOARD</h1>
-          <div className="filter-group-container">
+          <div className="filter-group-container" style={{ alignItems: 'center', display: 'flex' }}>
             <div className="filter-container">
               <label htmlFor="category-filter">Filter:</label>
               <select
@@ -366,7 +430,7 @@ function Optimized_Swim_Lanes() {
                 <option value="Indiv Project">Indiv Project</option>
               </select>
             </div>
-            <div className="group-by-container">
+            <div className="group-by-container" style={{ marginLeft: 16 }}>
               <label htmlFor="group-by">Group By:</label>
               <select
                 id="group-by"
@@ -377,6 +441,20 @@ function Optimized_Swim_Lanes() {
                 <option value="Category">Category</option>
               </select>
             </div>
+            <button
+              style={{
+                marginLeft: 20,
+                padding: '6px 16px',
+                borderRadius: 6,
+                border: '1px solid #ccc',
+                background: '#fff',
+                cursor: 'pointer',
+                fontWeight: 500,
+              }}
+              onClick={() => setLegendOpen(true)}
+            >
+              Legend
+            </button>
           </div>
         </div>
         <div className="kanban-labels" style={{ display: 'flex', alignItems: 'center' }}>
@@ -400,16 +478,17 @@ function Optimized_Swim_Lanes() {
           </div>
         </div>
         {renderRows()}
-        {modalOpen && (
+        {modalOpen && selectedTask && (
           <div className="modal-overlay" onClick={closeModal}>
-            <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
               <button className="modal-close" onClick={closeModal} style={{ float: 'right' }}>
                 &times;
               </button>
-              <Subgoal_Planner />
+              <Subgoal_Planner task={selectedTask} />
             </div>
           </div>
         )}
+        {legendOpen && <LegendPopup onClose={() => setLegendOpen(false)} />}
         <div
           className="add-assignee-icon"
           onClick={addNewAssignee}
