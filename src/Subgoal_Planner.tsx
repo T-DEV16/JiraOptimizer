@@ -8,13 +8,23 @@ type Subgoal = {
   status: 'todo' | 'doing' | 'done';
 };
 
-interface SubgoalPlannerProps {
-  subgoals: Subgoal[];
-  setSubgoals: (newSubgoals: Subgoal[]) => void;
-  taskTitle: string;
-}
+type MainTask = {
+  storyPoints: number;
+  title: string;
+  status: string;
+  category: string;
+  assignee: string;
+};
 
-function Subgoal_Planner({ subgoals, setSubgoals, taskTitle }: SubgoalPlannerProps) {
+
+function Subgoal_Planner({ task }: { task: MainTask }) {
+  const [tasks, setTasks] = useState<Task[]>([
+    { id: 1, title: 'Deploy', status: 'todo' },
+    { id: 2, title: 'Test it', status: 'todo' },
+    { id: 3, title: 'Subgoal Label', status: 'done' },
+    { id: 4, title: 'Subgoal Label', status: 'done' },
+  ]);
+
   const [editingTaskId, setEditingTaskId] = useState<number | null>(null);
   const [editTitle, setEditTitle] = useState('');
 
@@ -67,6 +77,7 @@ function Subgoal_Planner({ subgoals, setSubgoals, taskTitle }: SubgoalPlannerPro
     <div className="App1">
       <div className="app1-task-header">
         Task: {taskTitle}
+        {task.title}
         <button onClick={addNewTask} className="app1-add-btn">+ Add Subgoal</button>
       </div>
 
@@ -134,5 +145,8 @@ function Subgoal_Planner({ subgoals, setSubgoals, taskTitle }: SubgoalPlannerPro
     </div>
   );
 }
+type SubgoalPlannerProps = {
+  task: any; // Replace 'any' with your actual Task type if available
+};
 
 export default Subgoal_Planner;
