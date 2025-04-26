@@ -299,10 +299,6 @@ function Optimized_Swim_Lanes() {
   const [groupBy, setGroupBy] = useState<'Assignee' | 'Category'>('Assignee');
   const [assignees, setAssignees] = useState<string[]>(allAssignees); // Dynamic list of assignees
   const [collapsedRows, setCollapsedRows] = useState<Set<string>>(new Set()); // Tracks collapsed rows
-  const [modalOpen, setModalOpen] = useState(false);
-  const [assignees, setAssignees] = useState<string[]>(allAssignees);
-  const [collapsedRows, setCollapsedRows] = useState<Set<string>>(new Set());
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [legendOpen, setLegendOpen] = useState(false);
 
   // New state for per-task subgoals and modal
@@ -377,14 +373,6 @@ function Optimized_Swim_Lanes() {
       ...prev,
       [taskTitle]: newSubgoals,
     }));
-  const handleTaskCardClick = (task: Task) => {
-    setSelectedTask(task);
-    setModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setModalOpen(false);
-    setSelectedTask(null);
   };
 
   const filteredTasks = filterCategory
@@ -399,7 +387,7 @@ function Optimized_Swim_Lanes() {
           task={task}
           moveTask={moveTask}
           updateStoryPoints={updateStoryPoints}
-          onClick={() => handleTaskClick(task)}
+          onTaskCardClick={handleTaskClick}
         />
       ));
   };
@@ -420,7 +408,7 @@ function Optimized_Swim_Lanes() {
             groupValue={groupValue}
             groupBy={groupBy}
             updateStoryPoints={updateStoryPoints}
-            onTaskCardClick={handleTaskCardClick}
+            onTaskCardClick={handleTaskClick}
           />
         ))}
       </div>
@@ -531,7 +519,6 @@ function Optimized_Swim_Lanes() {
         </div>
         {renderRows()}
         {openTaskTitle && (
-        {modalOpen && selectedTask && (
           <div className="modal-overlay" onClick={closeModal}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
               <button className="modal-close" onClick={closeModal} style={{ float: 'right' }}>
@@ -539,10 +526,9 @@ function Optimized_Swim_Lanes() {
               </button>
               <Subgoal_Planner
                 subgoals={subgoalsByTask[openTaskTitle] || []}
-                setSubgoals={newSubgoals => updateSubgoalsForTask(openTaskTitle, newSubgoals)}
+                setSubgoals={(newSubgoals: Subgoal[]) => updateSubgoalsForTask(openTaskTitle, newSubgoals)}
                 taskTitle={openTaskTitle}
               />
-              <Subgoal_Planner task={selectedTask} />
             </div>
           </div>
         )}
