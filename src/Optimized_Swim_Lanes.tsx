@@ -373,6 +373,36 @@ function Optimized_Swim_Lanes() {
       ...prev,
       [taskTitle]: newSubgoals,
     }));
+
+    // Auto-move logic
+    const progress =
+      newSubgoals.length === 0
+        ? 0
+        : Math.round(
+            (newSubgoals.filter(sg => sg.status === 'done').length / newSubgoals.length) * 100
+          );
+
+    setTasks(prevTasks =>
+      prevTasks.map(task => {
+        if (task.title !== taskTitle) return task;
+        if (progress === 0 && task.status !== 'todo') {
+          return { ...task, status: 'todo' };
+        }
+        if (progress === 100 && task.status !== 'done') {
+          return { ...task, status: 'done' };
+        }
+        if (
+          progress > 0 &&
+          progress < 100 &&
+          !["doing", "review"].includes(task.status)
+        ) {
+          const inProgressStatuses = ["doing", "review"];
+          const randomStatus = inProgressStatuses[Math.floor(Math.random() * inProgressStatuses.length)];
+          return { ...task, status: randomStatus };
+        }
+        return task;
+      })
+    );
   };
 
   const filteredTasks = filterCategory
