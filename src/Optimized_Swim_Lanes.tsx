@@ -2,7 +2,39 @@ import React, { useState, useRef, useEffect } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import './Optimized_Swim_Lanes.css';
-import Subgoal_Planner from './Subgoal_Planner';
+import SubgoalPlanner from './Subgoal_Planner';
+
+const updateTaskInBackend = async (task: Task) => {
+  try {
+    const response = await fetch(`http://localhost:3001/tasks/${encodeURIComponent(task.title)}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(task)
+    });
+    if (!response.ok) throw new Error('Failed to update task');
+    console.log(`Synced: ${task.title}`);
+  } catch (err) {
+    console.error('Sync failed:', err);
+  }
+};
+
+const createTaskInBackend = async (task: Task) => {
+  try {
+    const response = await fetch('http://localhost:3001/tasks', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(task)
+    });
+    if (!response.ok) throw new Error('Failed to create task');
+    console.log(`✅ Created in backend: ${task.title}`);
+  } catch (err) {
+    console.error('❌ Create failed:', err);
+  }
+};
 
 type Task = {
   storyPoints: number;
@@ -19,22 +51,13 @@ type Subgoal = {
 };
 
 const defaultSubgoals: Subgoal[] = [
-  { id: 1, title: 'Deploy', status: 'todo' },
-  { id: 2, title: 'Test it', status: 'todo' },
-  { id: 3, title: 'Subgoal Label', status: 'done' },
-  { id: 4, title: 'Subgoal Label', status: 'done' },
+  { id: 1, title: 'Step 1', status: 'todo' },
+  { id: 2, title: 'Step 2', status: 'todo' },
+  { id: 3, title: 'Step 3', status: 'done' },
+  { id: 4, title: 'Step 4', status: 'done' },
 ];
 
 const tasksData: Task[] = [
-  { storyPoints: 2, title: 'Final Evaluation Results', status: 'todo', category: 'Final Project', assignee: 'RM' },
-  { storyPoints: 3, title: 'Final Exam', status: 'todo', category: 'Tests', assignee: 'RM' },
-  { storyPoints: 1, title: 'Final Survey', status: 'todo', category: 'Final Project', assignee: 'RM' },
-  { storyPoints: 5, title: 'Final Evaluation Planning', status: 'doing', category: 'Final Project', assignee: 'RM' },
-  { storyPoints: 4, title: 'Create Video Prototype', status: 'doing', category: 'Final Project', assignee: 'TD' },
-  { storyPoints: 3, title: 'Code Review', status: 'todo', category: 'Tests', assignee: 'Z' },
-  { storyPoints: 2, title: 'Write Documentation', status: 'doing', category: 'Participation', assignee: 'Z' },
-  { storyPoints: 4, title: 'Design Mockups', status: 'review', category: 'Final Project', assignee: 'JV' },
-  { storyPoints: 5, title: 'Fix Bugs', status: 'done', category: 'Indiv Project', assignee: 'JV' },
 ];
 
 // Load from localStorage if available
@@ -53,7 +76,7 @@ function loadSubgoalsFromStorage(): { [taskTitle: string]: Subgoal[] } {
   return {};
 }
 
-const allAssignees = ['RM', 'TD', 'Z', 'JV'];
+const allAssignees = ['TD'];
 
 const getColor = (category: string) => {
   switch (category) {
@@ -67,20 +90,14 @@ const getColor = (category: string) => {
 
 const getAssigneeColor = (assignee: string) => {
   switch (assignee) {
-    case 'RM': return '#FF9AA2';
     case 'TD': return '#A2CFFE';
-    case 'Z': return '#B5EAD7';
-    case 'JV': return '#FFDAC1';
     default: return '#D3D3D3';
   }
 };
 
 const getAssigneeName = (assignee: string) => {
   switch (assignee) {
-    case 'RM': return 'Rithvik Madhdhipatla';
-    case 'TD': return 'Tarun Devisetti';
-    case 'Z': return 'Zak';
-    case 'JV': return 'James Vo';
+    case 'TD': return 'Tarun Devesetti';
     default: return '';
   }
 };
@@ -94,11 +111,13 @@ function TaskCard({
   moveTask,
   updateStoryPoints,
   onTaskCardClick,
+  onDeleteTask,
 }: {
   task: Task;
   moveTask: (task: Task, newStatus: string, newAssignee?: string) => void;
   updateStoryPoints: (task: Task, newStoryPoints: number) => void;
   onTaskCardClick?: (task: Task) => void;
+  onDeleteTask?: (task: Task) => void; // 👈 add this line
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [, drag] = useDrag(() => ({
@@ -148,7 +167,18 @@ function TaskCard({
       <div className="task-title">{task.title}</div>
       <div className="task-category" style={{ backgroundColor: getColor(task.category) }}>
         {task.category}
-      </div>
+            </div>
+            {hovered && (
+            <button
+            className="delete-button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDeleteTask?.(task);
+            }}
+          >
+            ✕
+          </button>
+      )}
       <div className="task-footer">
         <div
           className="story-points-container"
@@ -221,6 +251,7 @@ function KanbanColumn({
   groupBy,
   updateStoryPoints,
   onTaskCardClick,
+  onDeleteTask,
 }: {
   status: string;
   tasks: Task[];
@@ -229,6 +260,7 @@ function KanbanColumn({
   groupBy: 'Assignee' | 'Category';
   updateStoryPoints: (task: Task, newStoryPoints: number) => void;
   onTaskCardClick?: (task: Task) => void;
+  onDeleteTask: (task: Task) => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [, drop] = useDrop(() => ({
@@ -253,6 +285,7 @@ function KanbanColumn({
           moveTask={moveTask}
           updateStoryPoints={updateStoryPoints}
           onTaskCardClick={onTaskCardClick}
+          onDeleteTask={onDeleteTask}
         />
       ))}
     </div>
@@ -317,6 +350,12 @@ function Optimized_Swim_Lanes() {
   const [collapsedRows, setCollapsedRows] = useState<Set<string>>(new Set()); // Tracks collapsed rows
   const [legendOpen, setLegendOpen] = useState(false);
 
+  const handleDeleteTask = (taskToDelete: Task) => {
+    setTasks(prev => prev.filter(task => task.title !== taskToDelete.title));
+    // If you want, you can later call deleteTaskFromBackend(taskToDelete) here
+  };
+  
+
   // New state for per-task subgoals and modal
   const [subgoalsByTask, setSubgoalsByTask] = useState<{ [taskTitle: string]: Subgoal[] }>(loadSubgoalsFromStorage());
   const [openTaskTitle, setOpenTaskTitle] = useState<string | null>(null);
@@ -340,25 +379,27 @@ function Optimized_Swim_Lanes() {
   }, [subgoalsByTask]);
 
   const moveTask = (task: Task, newStatus: string, newGroupValue?: string) => {
+    const updatedTask: Task = {
+      ...task,
+      status: newStatus,
+      ...(groupBy === 'Assignee' ? { assignee: newGroupValue || task.assignee } : {})
+    };
+  
     setTasks((prevTasks) =>
-      prevTasks.map((t) =>
-        t.title === task.title
-          ? {
-              ...t,
-              status: newStatus,
-              ...(groupBy === 'Assignee' ? { assignee: newGroupValue || t.assignee } : {}),
-            }
-          : t
-      )
+      prevTasks.map((t) => (t.title === task.title ? updatedTask : t))
     );
+  
+    updateTaskInBackend(updatedTask); // ✅ sync to backend
   };
 
   const updateStoryPoints = (task: Task, newStoryPoints: number) => {
+    const updatedTask: Task = { ...task, storyPoints: newStoryPoints };
+  
     setTasks((prevTasks) =>
-      prevTasks.map((t) =>
-        t.title === task.title ? { ...t, storyPoints: newStoryPoints } : t
-      )
+      prevTasks.map((t) => (t.title === task.title ? updatedTask : t))
     );
+  
+    updateTaskInBackend(updatedTask); // ✅ sync to backend
   };
 
   const addNewColumn = () => {
@@ -407,36 +448,43 @@ function Optimized_Swim_Lanes() {
       ...prev,
       [taskTitle]: newSubgoals,
     }));
-
-    // Auto-move logic
+  
     const progress =
       newSubgoals.length === 0
         ? 0
         : Math.round(
             (newSubgoals.filter(sg => sg.status === 'done').length / newSubgoals.length) * 100
           );
-
-    setTasks(prevTasks =>
-      prevTasks.map(task => {
+  
+    setTasks(prevTasks => {
+      return prevTasks.map(task => {
         if (task.title !== taskTitle) return task;
+  
+        let updatedStatus = task.status;
+  
         if (progress === 0 && task.status !== 'todo') {
-          return { ...task, status: 'todo' };
-        }
-        if (progress === 100 && task.status !== 'done') {
-          return { ...task, status: 'done' };
-        }
-        if (
+          updatedStatus = 'todo';
+        } else if (progress === 100 && task.status !== 'done') {
+          updatedStatus = 'done';
+        } else if (
           progress > 0 &&
           progress < 100 &&
           !["doing", "review"].includes(task.status)
         ) {
           const inProgressStatuses = ["doing", "review"];
-          const randomStatus = inProgressStatuses[Math.floor(Math.random() * inProgressStatuses.length)];
-          return { ...task, status: randomStatus };
+          updatedStatus = inProgressStatuses[Math.floor(Math.random() * inProgressStatuses.length)];
         }
+  
+        // ✅ Only update and sync if status changed
+        if (updatedStatus !== task.status) {
+          const updatedTask = { ...task, status: updatedStatus };
+          updateTaskInBackend(updatedTask); // 🔥 persist to backend
+          return updatedTask;
+        }
+  
         return task;
-      })
-    );
+      });
+    });
   };
 
   const filteredTasks = filterCategory
@@ -473,6 +521,7 @@ function Optimized_Swim_Lanes() {
             groupBy={groupBy}
             updateStoryPoints={updateStoryPoints}
             onTaskCardClick={handleTaskClick}
+            onDeleteTask={handleDeleteTask}  // ✅ add this line!
           />
         ))}
       </div>
@@ -605,7 +654,7 @@ function Optimized_Swim_Lanes() {
               <button className="modal-close" onClick={closeModal} style={{ float: 'right' }}>
                 &times;
               </button>
-              <Subgoal_Planner
+              <SubgoalPlanner
                 subgoals={subgoalsByTask[openTaskTitle] || []}
                 setSubgoals={(newSubgoals: Subgoal[]) => updateSubgoalsForTask(openTaskTitle, newSubgoals)}
                 taskTitle={openTaskTitle}
@@ -676,16 +725,15 @@ function Optimized_Swim_Lanes() {
                     }}
                     onClick={() => {
                       if (!newTask.title || !newTask.category || !newTask.assignee) return;
-                      setTasks(prev => [
-                        ...prev,
-                        {
-                          title: newTask.title!,
-                          category: newTask.category!,
-                          storyPoints: newTask.storyPoints || 1,
-                          assignee: newTask.assignee!,
-                          status: 'todo',
-                        },
-                      ]);
+                      const createdTask: Task = {
+                        title: newTask.title!,
+                        category: newTask.category!,
+                        storyPoints: newTask.storyPoints || 1,
+                        assignee: newTask.assignee!,
+                        status: 'todo',
+                      };              
+                      setTasks(prev => [...prev, createdTask]);
+                      createTaskInBackend(createdTask); // ✅ sync to backend
                       setSubgoalsByTask(prev => ({
                         ...prev,
                         [newTask.title!]: defaultSubgoals.map(sg => ({ ...sg })),

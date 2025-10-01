@@ -1,0 +1,540 @@
+{
+  "tasks": [
+    {
+      "id": "gdXXqWYlxqO86jwbzV9na",
+      "title": "Show dad task",
+      "category": "Family",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "WQay4IhVX-he6mqa_FPFi",
+      "title": "asfdfd",
+      "category": "asdfasdfas",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "2jAxsbkxvxCUrNlED1Hs7",
+      "title": "Something",
+      "category": "Hi",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "eOOXgj7BIzBL3HFmvr7-s",
+      "title": "Hola",
+      "category": "hm",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "Ukcf1dy94y5CzZQlpi8TK",
+      "title": "h ",
+      "category": "a",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "qDas0qSRZ6yELK5aFwJTN",
+      "title": "Finish Problem Set 2",
+      "category": "RBAI",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "Cc2-01zSPU_KyRhu-5PJM",
+      "title": "Reformat Emails",
+      "category": "Hackathon",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "7m3YJMAD4rF3cNnD21bg4",
+      "title": "Add Backend CRUD operations",
+      "category": "JiraOptimizer Improvement",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "FMu0BVSg8CIAHBAWRz9W9",
+      "title": "Finish Problem Set 3",
+      "category": "RBAI",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "0H2-rW2sCUgBUsQXLvpg4",
+      "title": "Watch Kalman FIlters Lecture",
+      "category": "RBAI",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "lNnJEUdS202foqIXdxHwy",
+      "title": "Find Guest Speakers",
+      "category": "Hackathon",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "2nO54vVHpgBo4Bia-WSRx",
+      "title": "Email Joyner",
+      "category": "Hackathon",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "b_B-Au2TNGo9j_XaIW0F_",
+      "title": "Reach out to Pauline and set up a meeting",
+      "category": "Hackathon",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "hXCIkOrtMvJHZiwvETLLN",
+      "title": "Start Instagram",
+      "category": "Hackathon",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "9YysxkQl1RddEWkyqcTtR",
+      "title": "A NeatCode a day",
+      "category": "NeatCode",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "j1d_oCUmT3Fc63NaFREug",
+      "title": "Kalman Filter Project",
+      "category": "RBAI",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "kR3KstcAGhuEnf36R2jSX",
+      "title": "Finish Problem Set 4 and 5",
+      "category": "RBAI",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "h4CLxzb78LJQxeapGxq5u",
+      "title": "Wave 2 Emails",
+      "category": "Hackathon",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "4nanu08-JM1iagaBWojrV",
+      "title": "Follow up on Wave 1 Emails",
+      "category": "Hackathon",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "mgU74_Us5G891nAUvTVhU",
+      "title": "PF project",
+      "category": "RBAI",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "8qjYSno6qhVvNfG5VMQ8n",
+      "title": "PF EC",
+      "category": "RBAI",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "gfIVLk9uRTnd6OOd_bdRc",
+      "title": "Read the BCI Book",
+      "category": "BCIstuff",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "P1Q2B7mgQwxv07PQIsUds",
+      "title": "Look into Nirmaan",
+      "category": "Nirmaan",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "y8PEFibSnLoq6F3xdntA5",
+      "title": "Message Tanka",
+      "category": "Hackathon",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "gEj-Ube_pL7KzgRBdcOWb",
+      "title": "Message SAP",
+      "category": "Hackathon",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "3sdTntjyWiG1SJSd3PW62",
+      "title": "RC 4",
+      "category": "RBAI",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "AWYNiNdSCFXvNOFx2qJ5d",
+      "title": "Set up College Contacting",
+      "category": "Hackathon",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "zy7hUPbFcMPe52tY_uCqq",
+      "title": "RC5",
+      "category": "RBAI",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "QIPUaRS0ES8PL5VvKh0qX",
+      "title": "PID",
+      "category": "RBAI",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "YZuq1JJqFqSlmB7Mbwo6L",
+      "title": "Search",
+      "category": "RBAI",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "3Lx0VBhmUdKOzoBeyE9D1",
+      "title": "Respond to RC4 and RC6",
+      "category": "RBAI",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "dXmshJLGhn_ir5pFqAx83",
+      "title": "SLAM",
+      "category": "RBAI",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "lnk7HHjLR4S3y5ZlA9pOb",
+      "title": "Final",
+      "category": "RBAI",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "7G_k2FoeNi3OAZwBMxVtN",
+      "title": "Update Prospectus with Company Sponsors",
+      "category": "Hackathon",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "LXz4EXwqRWu7YnYL2irJ1",
+      "title": "Make LinkedIN account",
+      "category": "Hackathon",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "XH4iIQQ2lMK62NF8gsYFq",
+      "title": "BCI Learning Track",
+      "category": "Hackathon",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "EIqRWHZYy0uPZDtDM3cFa",
+      "title": "Reach out to Kushaal",
+      "category": "Hackathon",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "uHSPJycEns9bmtWBxSWgX",
+      "title": "Find Neuroscience Judges",
+      "category": "Hackathon",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "djc7-aqn4d0Uym5pljJRF",
+      "title": "Make the Schedule",
+      "category": "Hackathon",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "Tqgr3cXVzIQcVz4LZTl2C",
+      "title": "Respond to Emotiv",
+      "category": "Hackathon",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "6Gd01V5tMWtDcEz0TzsQQ",
+      "title": "Respond to Judges",
+      "category": "Hackathon",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "HvuYlninrT_4tukbwk5X6",
+      "title": "Thank you note to TA's!",
+      "category": "RBAI",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "J6aahDjy9oMmqOXPjsUEq",
+      "title": "Learn Sandeep's LLM's!",
+      "category": "BCIstuff",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "FagxkLnp5mpZJRCbalTSe",
+      "title": "Make some Fundraisers",
+      "category": "Hackathon",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "R3-XAbcZ0hNnFbGY9NfSv",
+      "title": "make some Tabling Plans",
+      "category": "Hackathon",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "CY-IDM6YPWavNU3mBrBkQ",
+      "title": "Scout Robot Hands",
+      "category": "Hackathon",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "KAHhnQbqrxsoRwpEzptlh",
+      "title": "Update the Schedule and Timings on Website",
+      "category": "Hackathon",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "IBYWZ-Fh95OyJi8nH6vdW",
+      "title": "Email the Participants",
+      "category": "Hackathon",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "tc7gNdcDMR-rCPlKpg0Aq",
+      "title": "Email the Judges ",
+      "category": "Hackathon",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "ZiLhQzJan4-VLJ88DrUSs",
+      "title": "Financials",
+      "category": "Hackathon",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "xY__dsx17xOHwGq3wC6Wl",
+      "title": "Make content for Instagram Post",
+      "category": "Hackathon",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "dK_6BQ4N-wXvB14P5zYoC",
+      "title": "Follow up with Deccan MOrsels for food",
+      "category": "Hackathon",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "56Sv3xLhJ2sg98VX2t6us",
+      "title": "Ensure the sponsors have what they need",
+      "category": "Hackathon",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "KKDSbdsWGsIbGfpRqjEUG",
+      "title": "Test out Tmobile Wifif",
+      "category": "Hackathon",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "zZKMaaJQ8DV4FAP024wBg",
+      "title": "Reach out to lanyard ppls via live chat",
+      "category": "Hackathon",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "NjOunks-L_ayuzk4udLR9",
+      "title": "GenAI4Human Track",
+      "category": "Hackathon",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "2Fkwbp82dIdQKA8HLf6Pz",
+      "title": "Homework 1",
+      "category": "KBAI",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "wQ5ebtqz6BsqpK18THPrW",
+      "title": "Peer Reviews Or any Participation",
+      "category": "KBAI",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "YKiRA1euKX7KdG5AlaF8J",
+      "title": "The ARC Agent",
+      "category": "KBAI",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "ANcqssG3bS2iSYfibHiOR",
+      "title": "Tic-Tac-Toe",
+      "category": "KBAI",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "Vk1Wx86wW3ZoSiOAfbzaL",
+      "title": "A neatcode a day",
+      "category": "BCIStuff",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "VEqP_WfCFzMTz-dYDQZfx",
+      "title": "A neatcode a day",
+      "category": "BCIstuff",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "-oP67mDzX0khDhByHq94s",
+      "title": "NeuroEngineering Course",
+      "category": "BCIstuff",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "AEdabxBwBphgFmle6_hxM",
+      "title": "Lesson 5 Quiz",
+      "category": "CN",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "xUy8GVW82aF7AqMlb3mVS",
+      "title": "BioSignal Course",
+      "category": "BCIstuff",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "h9dpbcioA3QvWsZgFyVcL",
+      "title": "Listen to HealthyGamerGG",
+      "category": "BCIstuff",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    },
+    {
+      "id": "TnFt2blRxbEK90u6MBKPd",
+      "title": "Lesson 8 Quiz",
+      "category": "CN",
+      "storyPoints": 1,
+      "assignee": "TD",
+      "status": "todo"
+    }
+  ]
+}
