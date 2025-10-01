@@ -1,5 +1,4 @@
 .App {
-  font-family: Arial, sans-serif;
   padding: 20px;
   background: transparent;
   /* Beige background for the entire app */
@@ -84,7 +83,7 @@ body {
 
 .kanban-column {
   flex: 1;
-  background-color: rgba(255, 255, 255, 0.2);;
+  background-color: rgba(255, 255, 255, 0.2);
   padding: 10px;
   border-radius: 5px;
   display: flex;
@@ -169,7 +168,7 @@ body {
 
 .task-assignee:hover::after {
   content: attr(data-tooltip);
-  position: absolute;
+  position: relative;
   top: -25px;
   left: 50%;
   transform: translateX(-50%);
