@@ -50,5 +50,5 @@ app.listen(port, () => {
 
 
 app.get('/', (req, res) => {
-  res.send('✅ JSON API is running. Try GET /tasks');
+  res.send('✅ JSON API is running. Try your tasks');
 });

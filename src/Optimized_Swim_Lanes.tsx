@@ -20,23 +20,37 @@ const updateTaskInBackend = async (task: Task) => {
   }
 };
 
-const createTaskInBackend = async (task: Task) => {
+const createTaskInBackend = async (taskWithoutId: Omit<Task, 'id'>): Promise<Task | null> => {
   try {
     const response = await fetch('http://localhost:3001/tasks', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(task)
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(taskWithoutId)
     });
     if (!response.ok) throw new Error('Failed to create task');
-    console.log(`✅ Created in backend: ${task.title}`);
+    const taskWithId = await response.json();
+    console.log(`✅ Created in backend: ${taskWithId.id}`);
+    return taskWithId;
   } catch (err) {
     console.error('❌ Create failed:', err);
+    return null;
+  }
+};
+
+const deleteTaskInBackend = async (task: Task) => {
+  try {
+    const response = await fetch(`http://localhost:3001/tasks/${encodeURIComponent(task.id)}`, {
+      method: 'DELETE'
+    });
+    if (!response.ok) throw new Error('Failed to delete task');
+    console.log(`✅ Deleted in backend: ${task.title}`);
+  } catch (err) {
+    console.error(`❌ Delete failed: ${task.title}`, err);
   }
 };
 
 type Task = {
+  id: string; 
   storyPoints: number;
   title: string;
   status: string;
@@ -174,6 +188,7 @@ function TaskCard({
             onClick={(e) => {
               e.stopPropagation();
               onDeleteTask?.(task);
+              deleteTaskInBackend(task); // ✅ sync to backend`
             }}
           >
             ✕
@@ -295,11 +310,12 @@ function KanbanColumn({
 // Legend popup component
 function LegendPopup({ onClose }: { onClose: () => void }) {
   const [exampleTask, setExampleTask] = React.useState({
+    id: 'asdjkfnewjk',
     storyPoints: 3,
-    title: 'Example Task',
+    title: 'Find JINX',
     status: 'doing',
-    category: 'Final Project',
-    assignee: 'RM',
+    category: 'SumStory',
+    assignee: 'TD',
   });
 
   // Dummy functions for moveTask and onTaskCardClick
@@ -352,7 +368,6 @@ function Optimized_Swim_Lanes() {
 
   const handleDeleteTask = (taskToDelete: Task) => {
     setTasks(prev => prev.filter(task => task.title !== taskToDelete.title));
-    // If you want, you can later call deleteTaskFromBackend(taskToDelete) here
   };
   
 
@@ -723,21 +738,23 @@ function Optimized_Swim_Lanes() {
                       fontWeight: 600,
                       cursor: 'pointer',
                     }}
-                    onClick={() => {
+                    onClick={async () => {
                       if (!newTask.title || !newTask.category || !newTask.assignee) return;
-                      const createdTask: Task = {
+                      const baseTask = {
                         title: newTask.title!,
                         category: newTask.category!,
                         storyPoints: newTask.storyPoints || 1,
                         assignee: newTask.assignee!,
                         status: 'todo',
-                      };              
-                      setTasks(prev => [...prev, createdTask]);
-                      createTaskInBackend(createdTask); // ✅ sync to backend
+                      };
+                      const created = await createTaskInBackend(baseTask); 
+                      if (created)  {        
+                      setTasks(prev => [...prev, created]);
                       setSubgoalsByTask(prev => ({
                         ...prev,
-                        [newTask.title!]: defaultSubgoals.map(sg => ({ ...sg })),
+                        [created.title!]: defaultSubgoals.map(sg => ({ ...sg })),
                       }));
+                    }
                       setNewTaskModalOpen(false);
                       setNewTask({
                         title: '',
